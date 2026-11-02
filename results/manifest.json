@@ -161,6 +161,14 @@
    "model": "sharp-322m"
   },
   {
+   "file": "conditional_logit.csv",
+   "rows": 41,
+   "columns": 7,
+   "sha256_16": "dcb57beba7a7d419",
+   "description": "conditional_logit",
+   "model": "sharp-322m"
+  },
+  {
    "file": "gate_and_infeasible.csv",
    "rows": 24,
    "columns": 6,
@@ -185,11 +193,11 @@
    "model": "sharp-322m"
   },
   {
-   "file": "position.csv",
+   "file": "position_effect.csv",
    "rows": 7,
    "columns": 8,
    "sha256_16": "04ec5effa470526a",
-   "description": "position",
+   "description": "position_effect",
    "model": "sharp-322m"
   }
  ],

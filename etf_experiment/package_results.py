@@ -41,10 +41,11 @@ EXTRA = {
     "two_tick/change.csv": "results/tick2_main/{model}/表/两拍变化.csv",
     "factorial/marginal_effects.csv": "factorial/outputs/边际效应.csv",
     "factorial/placebo_and_label.csv": "factorial/outputs/安慰剂与标签.csv",
+    "factorial/conditional_logit.csv": "factorial/outputs/条件logit.csv",
     "probes/gate_and_infeasible.csv": "probes/outputs/门槛与不可行购买.csv",
     "probes/teacher_contrast.csv": "probes/outputs/教师对照.csv",
     "probes/wording_and_rewrite.csv": "probes/outputs/词汇与改写.csv",
-    "probes/position.csv": "probes/outputs/位置效应.csv",
+    "probes/position_effect.csv": "probes/outputs/位置效应.csv",
 }
 
 MODELS = ("sharp-322m", "sharp-421m-mlx", "sharp-4b-head-200k", "sharp-4b")
@@ -79,12 +80,17 @@ def main() -> int:
             })
 
     for destination_name, source_pattern in EXTRA.items():
-        for model in MODELS:
+        # Two cases: artefacts that exist per model (placebo, two-tick) and
+        # single-model artefacts (the factorial uses 322m, the probes a teacher).
+        # The latter are copied once, with the origin recorded in the manifest.
+        per_model = "{model}" in source_pattern
+        candidates = MODELS if per_model else MODELS[:1]
+        for model in candidates:
             source = root / source_pattern.format(model=model)
             if not source.is_file():
                 continue
             stem = Path(destination_name)
-            destination = out / stem.parent / f"{stem.stem}_{model}.csv"
+            destination = out / stem.parent / f"{stem.stem}_{model}.csv" if per_model else out / f"{stem.stem}.csv"
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(source, destination)
             rows = read_csv(destination)

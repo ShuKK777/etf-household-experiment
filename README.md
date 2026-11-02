@@ -74,8 +74,9 @@ our task jsonl  →  run_batches  →  World (state, SQLite commit store)
 `docs/调用链路.md` has the full diagrams and a table of exactly which parts are
 engine and which are ours. In short:
 
-- **Engine, unmodified**: `run_batches`, `examples/persona_choice/app.py`,
-  `mas_engine.service.server`, `brain/decision_model.py`, `laya.serve`.
+- **Engine, unmodified** (paths relative to the engine checkout): `run_batches`,
+  `examples/persona_choice/app.py`, `mas_engine.service.server`,
+  `src/mas_engine/brain/decision_model.py`, `laya.serve`.
 - **Ours**: the fifteen condition templates, the 36-field persona rendering, the
   task-row construction, the launcher that stands up eight lanes, the Qwen
   decision-head adapter, the statistics, the tables and the figures.
