@@ -1,0 +1,15 @@
+# analysis path (tables, tests)
+numpy>=1.24
+
+# figures
+matplotlib>=3.7
+
+# report PDF
+markdown>=3.4
+weasyprint>=60
+
+# tests
+pytest>=7.0
+
+# NOTE: running the decision models additionally needs the MAS engine checkout
+# and a CUDA build of torch. Those are installed separately; see README.

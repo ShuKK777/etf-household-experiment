@@ -1,0 +1,70 @@
+{
+  "currency": "CNY",
+  "income_and_consumption": "annual flows",
+  "assets_and_debt": "balance stocks",
+  "labels": {
+    "income_total": {
+      "b1": "under 20,000 yuan",
+      "b2": "20,000 to under 50,000 yuan",
+      "b3": "50,000 to under 100,000 yuan",
+      "b4": "100,000 to under 200,000 yuan",
+      "b5": "200,000 yuan or more"
+    },
+    "food": {
+      "b1": "under 6,000 yuan",
+      "b2": "6,000 to under 15,000 yuan",
+      "b3": "15,000 to under 30,000 yuan",
+      "b4": "30,000 to under 60,000 yuan",
+      "b5": "60,000 yuan or more"
+    },
+    "clothing": {
+      "b1": "under 1,000 yuan",
+      "b2": "1,000 to under 3,000 yuan",
+      "b3": "3,000 to under 8,000 yuan",
+      "b4": "8,000 to under 20,000 yuan",
+      "b5": "20,000 yuan or more"
+    },
+    "housing_transport_other": {
+      "b1": "under 2,000 yuan",
+      "b2": "2,000 to under 6,000 yuan",
+      "b3": "6,000 to under 15,000 yuan",
+      "b4": "15,000 to under 40,000 yuan",
+      "b5": "40,000 yuan or more"
+    },
+    "education_spend": {
+      "b1": "under 1,000 yuan",
+      "b2": "1,000 to under 5,000 yuan",
+      "b3": "5,000 to under 15,000 yuan",
+      "b4": "15,000 to under 40,000 yuan",
+      "b5": "40,000 yuan or more"
+    },
+    "health_spend": {
+      "b1": "under 1,000 yuan",
+      "b2": "1,000 to under 3,000 yuan",
+      "b3": "3,000 to under 10,000 yuan",
+      "b4": "10,000 to under 30,000 yuan",
+      "b5": "30,000 yuan or more"
+    },
+    "assets": {
+      "b1": "under 10,000 yuan",
+      "b2": "10,000 to under 50,000 yuan",
+      "b3": "50,000 to under 200,000 yuan",
+      "b4": "200,000 to under 500,000 yuan",
+      "b5": "500,000 yuan or more"
+    },
+    "debt": {
+      "none": "no debt",
+      "d1": "above 0 to 10,000 yuan",
+      "d2": "above 10,000 to 20,000 yuan",
+      "d3": "above 20,000 to 50,000 yuan",
+      "d4": "above 50,000 to 100,000 yuan",
+      "d5": "above 100,000 to 200,000 yuan",
+      "d6": "above 200,000 to 300,000 yuan",
+      "d7": "above 300,000 to 500,000 yuan",
+      "d8": "above 500,000 to 1,000,000 yuan",
+      "d9": "above 1,000,000 to 2,000,000 yuan",
+      "d10": "above 2,000,000 to 5,000,000 yuan",
+      "d11": "above 5,000,000 yuan"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "source_sha256_matches": true,
+  "pool_n": 9130025,
+  "sample_n": 10000,
+  "unique_source_rows": 10000,
+  "original_fields_retained": 36,
+  "all_investment_activity_none": true,
+  "asset_quota": {
+    "b1": 3000,
+    "b2": 2600,
+    "b3": 2400,
+    "b4": 1200,
+    "b5": 800
+  },
+  "risk_strata": 30,
+  "first_batch_n": 3000,
+  "remaining_n": 7000,
+  "weights_sum": 10000.000000000015,
+  "output_roundtrip_matches": true,
+  "jsonl_records": 10000,
+  "model_calls_run": 0,
+  "independent_source_row_match_n": 10000,
+  "unique_complete_36_field_profiles": 10000,
+  "decoded_matches_source_codebooks": true,
+  "pool_strata_match_verified_counts": true,
+  "jsonl_matches_parquet_and_index": true,
+  "all_assignment_and_order_checks_passed": true
+}

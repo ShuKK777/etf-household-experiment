@@ -1,0 +1,202 @@
+{
+ "tables": [
+  {
+   "file": "baseline/sharp-322m.csv",
+   "rows": 41,
+   "columns": 38,
+   "sha256_16": "eb8648ed1dbeb823",
+   "description": "六产品在本条件下的一万户口径选择概率，全体与七种分组",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "baseline/sharp-421m-mlx.csv",
+   "rows": 41,
+   "columns": 38,
+   "sha256_16": "aea6401c53adb2a2",
+   "description": "六产品在本条件下的一万户口径选择概率，全体与七种分组",
+   "model": "sharp-421m-mlx"
+  },
+  {
+   "file": "baseline/sharp-4b-head-200k.csv",
+   "rows": 41,
+   "columns": 38,
+   "sha256_16": "862eb381da7f130b",
+   "description": "六产品在本条件下的一万户口径选择概率，全体与七种分组",
+   "model": "sharp-4b-head-200k"
+  },
+  {
+   "file": "baseline/sharp-4b.csv",
+   "rows": 41,
+   "columns": 38,
+   "sha256_16": "1dc3b803b9d88f1b",
+   "description": "六产品在本条件下的一万户口径选择概率，全体与七种分组",
+   "model": "sharp-4b"
+  },
+  {
+   "file": "clause_impact/sharp-322m.csv",
+   "rows": 16,
+   "columns": 39,
+   "sha256_16": "26e3fe2328adb400",
+   "description": "每个条件相对基准的逐户变化，含购买未达成的单列",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "clause_impact/sharp-421m-mlx.csv",
+   "rows": 16,
+   "columns": 39,
+   "sha256_16": "f3daed9fc7921d41",
+   "description": "每个条件相对基准的逐户变化，含购买未达成的单列",
+   "model": "sharp-421m-mlx"
+  },
+  {
+   "file": "clause_impact/sharp-4b-head-200k.csv",
+   "rows": 16,
+   "columns": 39,
+   "sha256_16": "fd60cd965609ac95",
+   "description": "每个条件相对基准的逐户变化，含购买未达成的单列",
+   "model": "sharp-4b-head-200k"
+  },
+  {
+   "file": "clause_impact/sharp-4b.csv",
+   "rows": 16,
+   "columns": 39,
+   "sha256_16": "1cb7647bc94d9bfc",
+   "description": "每个条件相对基准的逐户变化，含购买未达成的单列",
+   "model": "sharp-4b"
+  },
+  {
+   "file": "heterogeneity/sharp-322m.csv",
+   "rows": 339,
+   "columns": 23,
+   "sha256_16": "73373ca1882f39d9",
+   "description": "按资产、债务、收支、风险偏好、金融知识、信任切分",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "heterogeneity/sharp-421m-mlx.csv",
+   "rows": 339,
+   "columns": 23,
+   "sha256_16": "859d6109adf56893",
+   "description": "按资产、债务、收支、风险偏好、金融知识、信任切分",
+   "model": "sharp-421m-mlx"
+  },
+  {
+   "file": "heterogeneity/sharp-4b-head-200k.csv",
+   "rows": 339,
+   "columns": 23,
+   "sha256_16": "28a3f223e181ad14",
+   "description": "按资产、债务、收支、风险偏好、金融知识、信任切分",
+   "model": "sharp-4b-head-200k"
+  },
+  {
+   "file": "heterogeneity/sharp-4b.csv",
+   "rows": 339,
+   "columns": 23,
+   "sha256_16": "c75015d92064881d",
+   "description": "按资产、债务、收支、风险偏好、金融知识、信任切分",
+   "model": "sharp-4b"
+  },
+  {
+   "file": "placebo/sentence_contrast_sharp-322m.csv",
+   "rows": 13,
+   "columns": 9,
+   "sha256_16": "7bf6cb25dde2bc89",
+   "description": "sentence_contrast",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "placebo/sentence_contrast_sharp-4b.csv",
+   "rows": 13,
+   "columns": 9,
+   "sha256_16": "fd7be6ef92430a3d",
+   "description": "sentence_contrast",
+   "model": "sharp-4b"
+  },
+  {
+   "file": "two_tick/change_sharp-322m.csv",
+   "rows": 55,
+   "columns": 9,
+   "sha256_16": "264224b42a985f95",
+   "description": "change",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "two_tick/change_sharp-421m-mlx.csv",
+   "rows": 55,
+   "columns": 9,
+   "sha256_16": "c6fd99369d7a13b0",
+   "description": "change",
+   "model": "sharp-421m-mlx"
+  },
+  {
+   "file": "two_tick/change_sharp-4b-head-200k.csv",
+   "rows": 55,
+   "columns": 9,
+   "sha256_16": "59e493284e837425",
+   "description": "change",
+   "model": "sharp-4b-head-200k"
+  },
+  {
+   "file": "two_tick/change_sharp-4b.csv",
+   "rows": 55,
+   "columns": 9,
+   "sha256_16": "6e677168020a194d",
+   "description": "change",
+   "model": "sharp-4b"
+  },
+  {
+   "file": "marginal_effects.csv",
+   "rows": 90,
+   "columns": 19,
+   "sha256_16": "63c6b8ae9ca3d579",
+   "description": "marginal_effects",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "placebo_and_label.csv",
+   "rows": 2,
+   "columns": 22,
+   "sha256_16": "1a5e5bc61b713c19",
+   "description": "placebo_and_label",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "gate_and_infeasible.csv",
+   "rows": 24,
+   "columns": 6,
+   "sha256_16": "c85b3cdade09d86c",
+   "description": "gate_and_infeasible",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "teacher_contrast.csv",
+   "rows": 200,
+   "columns": 9,
+   "sha256_16": "2e1d6a6d9bc67b5a",
+   "description": "teacher_contrast",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "wording_and_rewrite.csv",
+   "rows": 28,
+   "columns": 5,
+   "sha256_16": "d51886373f4163ca",
+   "description": "wording_and_rewrite",
+   "model": "sharp-322m"
+  },
+  {
+   "file": "position.csv",
+   "rows": 7,
+   "columns": 8,
+   "sha256_16": "04ec5effa470526a",
+   "description": "position",
+   "model": "sharp-322m"
+  }
+ ],
+ "models": [
+  "sharp-322m",
+  "sharp-421m-mlx",
+  "sharp-4b-head-200k",
+  "sharp-4b"
+ ]
+}

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "etf-experiment"
+version = "1.0.0"
+description = "Controlled product-condition experiments on household ETF adoption"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+figures = ["matplotlib>=3.7"]
+report = ["markdown>=3.4", "weasyprint>=60"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+etf-experiment = "etf_experiment.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["etf_experiment*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

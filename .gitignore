@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+
+# experiment artefacts that are regenerated, never committed
+inputs/
+tasks*/
+lanes*/
+logs/
+out/
+models/
+*.sqlite3
+
+# large per-household results: only the aggregate CSVs under results/ ship
+results/lane*/
+results/*/tick1/
+results/*/tick2/
+results/*/lane*/
+results/by_order/
+results/tables/
+results/sync/
+results/head200k*/
+
+# scratch
+.ipynb_checkpoints/
+.DS_Store
+*.tar.gz
+*.zip
