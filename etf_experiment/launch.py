@@ -147,6 +147,7 @@ class Launcher:
         else:
             if self.config.package is None or self.config.upstream is None:
                 raise ValueError("a qwen lane needs both a head package and an upstream model")
+            scorer_dir = self.config.paths.scorer_dir
             env.update(
                 {
                     "HEAD_PACKAGE": str(self.config.package),
@@ -156,11 +157,11 @@ class Launcher:
                     "HEAD_MAX_LENGTH": "3072",
                     "LAYA_PORT": str(lane.scorer),
                     "CUDA_VISIBLE_DEVICES": str(lane.index),
-                    "PYTHONPATH": str(self.config.paths.root / "head200k"),
+                    "PYTHONPATH": str(scorer_dir),
                 }
             )
-            cmd = [str(self.config.paths.qwen_python), str(self.config.paths.root / "head200k/serve_systemone.py")]
-            cwd = self.config.paths.root / "head200k"
+            cmd = [str(self.config.paths.qwen_python), str(scorer_dir / "serve_systemone.py")]
+            cwd = scorer_dir
         return cmd, env, cwd
 
     def brain_env(self, lane: Lane) -> dict[str, str]:

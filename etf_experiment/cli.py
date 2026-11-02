@@ -53,7 +53,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         model=args.model,
         model_dir=Path(args.model_dir) if args.model_dir else paths.model_dir(args.model),
         tasks=Path(args.tasks) if args.tasks else paths.tasks,
-        lanes_dir=Path(args.lanes) if args.lanes else paths.root / f"lanes_{args.model}",
+        lanes_dir=Path(args.lanes) if args.lanes else paths.root / "lanes" / args.model,
         results_dir=Path(args.results) if args.results else paths.results / args.model,
         log_prefix=args.log_prefix or "",
         kind=args.kind,

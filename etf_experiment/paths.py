@@ -1,40 +1,58 @@
 """Every filesystem location the experiment needs, resolved from the environment.
 
-Nothing else in the package hardcodes an absolute path. Set ``ETF_ROOT`` to the
-checkout and ``MAS_ENGINE`` to the engine; both have defaults that work when the
-engine sits next to this repository, which is how the original runs were laid
-out::
+Nothing in the package hardcodes a machine-specific path. The only defaults are
+relative to each other: this checkout's own directory, and an engine checkout
+that sits beside it. Point ``ETF_ROOT`` and ``MAS_ENGINE`` at anything else.
 
-    /workspace/ETF/                     <- ETF_ROOT
-    /workspace/MAS_Engine_Microservice/ <- MAS_ENGINE
-
-The Python interpreters are separate on purpose: the engine runs in its own
-virtualenv, and the encoder checkpoint needs a CUDA build of torch that the
-engine's venv does not have.
+The three interpreters are separate on purpose. The engine runs in its own
+virtualenv; the encoder checkpoint needs a CUDA build of torch that the engine's
+venv does not have; and the Qwen head needs a third environment for peft and
+transformers. Each is read from the environment and falls back to the current
+interpreter, which is enough for the analysis stages and fails loudly at load
+time for the training-free scoring stages if the wrong one is used.
 """
 
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+# Environment variables, in one place so callers can be grepped for.
+ENV_ROOT = "ETF_ROOT"
+ENV_ENGINE = "MAS_ENGINE"
+ENV_MODELS = "ETF_MODELS"
+ENV_DATA = "ETF_DATA"
+ENV_INPUTS = "ETF_INPUTS"
+ENV_TASKS = "ETF_TASKS"
+ENV_RESULTS = "ETF_RESULTS"
+ENV_LOGS = "ETF_LOGS"
+ENV_FIGURES = "ETF_FIGURES"
+ENV_ENGINE_PYTHON = "ETF_ENGINE_PYTHON"
+ENV_GPU_PYTHON = "ETF_GPU_PYTHON"
+ENV_QWEN_PYTHON = "ETF_QWEN_PYTHON"
 
-def _env_path(name: str, default: Path) -> Path:
+
+def _resolve(name: str, default: Path) -> Path:
     raw = os.environ.get(name)
     return Path(raw).expanduser().resolve() if raw else default.resolve()
 
 
-def _env_python(name: str, default: Path) -> Path:
-    """A virtualenv entry point, or the current interpreter if the venv is absent.
+def _resolve_python(name: str, default: Path | None) -> Path:
+    """An interpreter path, or the running interpreter when nothing is configured.
 
-    Falling back keeps `etf-experiment tables` usable on a laptop with only the
-    aggregate CSVs and no engine installed.
+    Falling back to ``sys.executable`` keeps the analysis stages usable on a
+    machine that has no engine and no GPU: those stages only need NumPy. A scoring
+    stage started with the wrong interpreter fails when it tries to import torch
+    or the checkpoint, which is a clearer error than a path that does not exist.
     """
     raw = os.environ.get(name)
     if raw:
         return Path(raw).expanduser().resolve()
-    return default if default.is_file() else Path(os.sys.executable)
+    if default is not None and default.is_file():
+        return default.resolve()
+    return Path(sys.executable).resolve()
 
 
 @dataclass(frozen=True)
@@ -70,6 +88,12 @@ class Paths:
             if candidate.is_file():
                 return candidate
         return candidates[0]
+
+    @property
+    def scorer_dir(self) -> Path:
+        """The decision-head adapter we ship, for models the engine cannot load."""
+        return Path(__file__).resolve().parent / "scorer"
+
     def model_dir(self, model: str) -> Path:
         return self.models / model
 
@@ -87,21 +111,25 @@ class Paths:
 
 
 def get_paths() -> Paths:
-    root = _env_path("ETF_ROOT", Path(__file__).resolve().parents[1])
-    engine = _env_path("MAS_ENGINE", root.parent / "MAS_Engine_Microservice")
+    root = _resolve(ENV_ROOT, Path(__file__).resolve().parents[1])
+    engine = _resolve(ENV_ENGINE, root.parent / "MAS_Engine_Microservice")
     return Paths(
         root=root,
         engine=engine,
-        models=_env_path("ETF_MODELS", root / "models"),
-        data=_env_path("ETF_DATA", root / "data"),
-        inputs=_env_path("ETF_INPUTS", root / "inputs"),
-        tasks=_env_path("ETF_TASKS", root / "tasks"),
-        results=_env_path("ETF_RESULTS", root / "results"),
-        logs=_env_path("ETF_LOGS", root / "logs"),
-        figures=_env_path("ETF_FIGURES", root / "figures"),
-        engine_python=_env_python("ETF_ENGINE_PYTHON", engine / ".venv/bin/python"),
-        gpu_python=_env_python("ETF_GPU_PYTHON", root.parent / "MAS-Fin/.venv-gpu/bin/python"),
-        qwen_python=_env_python("ETF_QWEN_PYTHON", root.parent / "RLCD/.venv/bin/python"),
+        models=_resolve(ENV_MODELS, root / "models"),
+        data=_resolve(ENV_DATA, root / "data"),
+        inputs=_resolve(ENV_INPUTS, root / "inputs"),
+        tasks=_resolve(ENV_TASKS, root / "tasks"),
+        results=_resolve(ENV_RESULTS, root / "results"),
+        logs=_resolve(ENV_LOGS, root / "logs"),
+        figures=_resolve(ENV_FIGURES, root / "figures"),
+        engine_python=_resolve_python(ENV_ENGINE_PYTHON, engine / ".venv/bin/python"),
+        # The encoder scorer needs a CUDA build of torch, which the engine's venv
+        # does not have. Without an explicit override this falls back to the
+        # running interpreter and the lane fails at import, which is the honest
+        # signal that no GPU environment was configured.
+        gpu_python=_resolve_python(ENV_GPU_PYTHON, None),
+        qwen_python=_resolve_python(ENV_QWEN_PYTHON, None),
     )
 
 

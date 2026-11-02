@@ -10,6 +10,7 @@ Run with ``python -m pytest tests`` from the repository root.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -127,3 +128,40 @@ def test_panel_shape_and_weights():
     assert weights.sum() == pytest.approx(10_000, abs=1e-6)
     orders = {tuple(record["display_order"]) for record in records}
     assert all(sorted(order) == list("ABCDEF") for order in orders)
+
+
+# ---------------------------------------------------------------- portability
+def test_no_machine_specific_paths_in_package():
+    """The package must not bake in an absolute home or checkout path.
+
+    This is the regression test for the thing that makes a repository
+    uncloneable: a path like /home/<user>/... or /Users/<name>/... that worked on
+    the machine where the experiment ran. Every location has to come from
+    ``paths.get_paths()`` so a clone runs wherever it lands.
+    """
+    import re
+
+    package = Path(__file__).resolve().parents[1] / "etf_experiment"
+    pattern = re.compile(r"/(?:home|Users|root|workspace)/")
+    offenders = []
+    for source in package.rglob("*.py"):
+        for number, line in enumerate(source.read_text(encoding="utf-8").splitlines(), 1):
+            if pattern.search(line) and not line.lstrip().startswith("#"):
+                offenders.append(f"{source.relative_to(package)}:{number}: {line.strip()}")
+    assert not offenders, "machine-specific paths found:\n" + "\n".join(offenders)
+
+
+def test_paths_resolve_without_environment():
+    """Unconfigured paths must still resolve, and relative to the checkout."""
+    from etf_experiment import paths as paths_module
+
+    saved = {key: os.environ.pop(key) for key in list(os.environ) if key.startswith(("ETF_", "MAS_ENGINE"))}
+    try:
+        resolved = paths_module.get_paths()
+    finally:
+        os.environ.update(saved)
+    root = Path(__file__).resolve().parents[1]
+    assert resolved.root == root
+    assert resolved.data == root / "data"
+    assert resolved.scorer_dir.is_dir()
+    assert resolved.engine_python.is_file()

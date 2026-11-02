@@ -21,7 +21,7 @@ framing — actually move money, for which households, and by how much.
 
 | Path | Contents |
 |---|---|
-| `etf_experiment/` | the experiment code: conditions, persona rendering, task building, the engine launcher, the three tables, the figures |
+| `etf_experiment/` | the experiment code: conditions, persona rendering, task building, the engine launcher, the Qwen scorer, the three tables, the figures |
 | `docs/调用链路.md` | **how the experiment calls the MAS engine**, and which modules are ours |
 | `报告/实验汇总.md` | full report: design, results, economic interpretation, limits |
 | `报告/实验汇总.pdf` | the same report as a print-ready PDF with figures |
@@ -90,12 +90,27 @@ Python 3.10+. The only heavy dependency for the analysis path is NumPy; plots ne
 Matplotlib, the PDF needs WeasyPrint, and PDFs need CJK fonts (Noto Sans CJK).
 
 Running the models additionally needs the MAS engine checkout and a CUDA build of
-torch; set these if they are not siblings of this repository:
+torch. Nothing is hardcoded: every location is read from the environment, and the
+defaults are relative, so the common layout — the engine beside this checkout —
+needs no configuration at all.
 
-```bash
-export MAS_ENGINE=/path/to/MAS_Engine_Microservice
-export ETF_ROOT=/path/to/this/repo
-```
+| Variable | Default | Meaning |
+|---|---|---|
+| `ETF_ROOT` | this checkout | where `data/`, `results/`, `tasks/` live |
+| `MAS_ENGINE` | `$ETF_ROOT/../MAS_Engine_Microservice` | the engine checkout |
+| `ETF_MODELS` | `$ETF_ROOT/models` | decision-model packages |
+| `ETF_DATA` | `$ETF_ROOT/data` | the household panel |
+| `ETF_INPUTS` | `$ETF_ROOT/inputs` | rendered prompt inputs |
+| `ETF_TASKS` | `$ETF_ROOT/tasks` | engine task rows |
+| `ETF_RESULTS` | `$ETF_ROOT/results` | per-household results |
+| `ETF_LOGS`, `ETF_FIGURES` | `$ETF_ROOT/...` | run logs, report figures |
+| `ETF_ENGINE_PYTHON` | `$MAS_ENGINE/.venv/bin/python` | engine interpreter |
+| `ETF_GPU_PYTHON` | current interpreter | torch+CUDA, for `laya.serve` |
+| `ETF_QWEN_PYTHON` | current interpreter | torch+peft, for the Qwen head |
+
+The two scorer interpreters fall back to the running interpreter rather than to a
+guessed path, so the analysis stages work on a machine with no GPU while a scoring
+stage fails at import with a message that says which environment is missing.
 
 ## Use
 

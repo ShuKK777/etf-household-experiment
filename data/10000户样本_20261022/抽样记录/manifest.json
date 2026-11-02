@@ -1,154 +1,156 @@
 {
-  "dataset": "ETF first-step fixed 10000-household panel",
-  "created_at_utc": "2026-10-22T03:24:30.365565+00:00",
-  "source": {
-    "path": "/Users/vega/Downloads/MAS-Fin/S²-MAS/10M_Household/unique_10m.parquet",
-    "sha256": "231bc5651f8da612bfa9854ba73038438142c1c376ffe57a1bf3b9040f4be12b",
-    "rows": 10000000,
-    "fields": 36
+ "dataset": "ETF first-step fixed 10000-household panel",
+ "created_at_utc": "2026-10-22T03:24:30.365565+00:00",
+ "source": {
+  "path": "10M_Household/unique_10m.parquet",
+  "sha256": "231bc5651f8da612bfa9854ba73038438142c1c376ffe57a1bf3b9040f4be12b",
+  "rows": 10000000,
+  "fields": 36,
+  "path_note": "relative to the project root that holds 10M_Household/"
+ },
+ "source_manifest_sha256": "73a0a74048e5ec0009e4bf9b6b16bda915d04cd0e246cc86afa86d70023fcae0",
+ "source_brackets_sha256": "df6c4d5bf143c53eaa576b936a2b602c5988c2a2fb7f31b23504e0af0bca2cdf",
+ "design_snapshot_sha256": "997a19e490454c60c8924e20b4b1db6ee9eb0751dead5cb185ae97102c739f9f",
+ "filter": {
+  "extended.investment_activity": "none"
+ },
+ "pool_n": 9130025,
+ "sample_n": 10000,
+ "stratification": [
+  "extended.financial_asset_bracket",
+  "extended.risk_preference"
+ ],
+ "asset_quota": {
+  "b1": 3000,
+  "b2": 2600,
+  "b3": 2400,
+  "b4": 1200,
+  "b5": 800
+ },
+ "asset_order": [
+  "b1",
+  "b2",
+  "b3",
+  "b4",
+  "b5"
+ ],
+ "risk_order": [
+  "high",
+  "slightly_high",
+  "average",
+  "slightly_low",
+  "none",
+  "unknown"
+ ],
+ "allocation": "Within asset: integer largest remainder; ties use risk codebook order.",
+ "selection": "Ascending eligible source rows per cell; Generator(PCG64).choice(replace=False); sorted output.",
+ "seeds": {
+  "main": 20261021,
+  "first_batch": 20261022,
+  "display_order": 20261023
+ },
+ "first_batch": "3000 nested households; 30 percent per asset; risk allocation uses source-cell proportions.",
+ "source_row_index_base": 0,
+ "output_sort": "source_row_index ascending",
+ "normalized_weight": "(pool_stratum_n / pool_n) / (sample_stratum_n / 10000)",
+ "expansion_weight": "pool_stratum_n / sample_stratum_n",
+ "assignments": {
+  "M_cny": {
+   "b1": 5000,
+   "b2": 30000,
+   "b3": 125000,
+   "b4": 350000,
+   "b5": 625000
   },
-  "source_manifest_sha256": "73a0a74048e5ec0009e4bf9b6b16bda915d04cd0e246cc86afa86d70023fcae0",
-  "source_brackets_sha256": "df6c4d5bf143c53eaa576b936a2b602c5988c2a2fb7f31b23504e0af0bca2cdf",
-  "design_snapshot_sha256": "997a19e490454c60c8924e20b4b1db6ee9eb0751dead5cb185ae97102c739f9f",
-  "filter": {
-    "extended.investment_activity": "none"
+  "X": "M/2",
+  "P_cents": "ceil(X_cents/1.015)",
+  "I_cents": "X_cents-P_cents"
+ },
+ "planned_conditions": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ],
+ "planned_choices": 150000,
+ "sample_drawn": true,
+ "model_calls_run": 0,
+ "software": {
+  "python": "3.9.6",
+  "numpy": "1.26.4",
+  "pyarrow": "21.0.0"
+ },
+ "files": {
+  "README.md": {
+   "sha256": "aabc41b4e6f6b61957dbd6320565c0d09953ccd6cd113c728c7325210aeb736d",
+   "bytes": 694
   },
-  "pool_n": 9130025,
-  "sample_n": 10000,
-  "stratification": [
-    "extended.financial_asset_bracket",
-    "extended.risk_preference"
-  ],
-  "asset_quota": {
-    "b1": 3000,
-    "b2": 2600,
-    "b3": 2400,
-    "b4": 1200,
-    "b5": 800
+  "家庭数据.jsonl": {
+   "sha256": "5c3781d0f4e0b6b969f959891caf7e28c7b2695f2f93252248c076b4c3b2a91c",
+   "bytes": 20170508
   },
-  "asset_order": [
-    "b1",
-    "b2",
-    "b3",
-    "b4",
-    "b5"
-  ],
-  "risk_order": [
-    "high",
-    "slightly_high",
-    "average",
-    "slightly_low",
-    "none",
-    "unknown"
-  ],
-  "allocation": "Within asset: integer largest remainder; ties use risk codebook order.",
-  "selection": "Ascending eligible source rows per cell; Generator(PCG64).choice(replace=False); sorted output.",
-  "seeds": {
-    "main": 20261021,
-    "first_batch": 20261022,
-    "display_order": 20261023
+  "抽样记录/brackets.json": {
+   "sha256": "df6c4d5bf143c53eaa576b936a2b602c5988c2a2fb7f31b23504e0af0bca2cdf",
+   "bytes": 2285
   },
-  "first_batch": "3000 nested households; 30 percent per asset; risk allocation uses source-cell proportions.",
-  "source_row_index_base": 0,
-  "output_sort": "source_row_index ascending",
-  "normalized_weight": "(pool_stratum_n / pool_n) / (sample_stratum_n / 10000)",
-  "expansion_weight": "pool_stratum_n / sample_stratum_n",
-  "assignments": {
-    "M_cny": {
-      "b1": 5000,
-      "b2": 30000,
-      "b3": 125000,
-      "b4": 350000,
-      "b5": 625000
-    },
-    "X": "M/2",
-    "P_cents": "ceil(X_cents/1.015)",
-    "I_cents": "X_cents-P_cents"
+  "抽样记录/design_at_sampling.md": {
+   "sha256": "997a19e490454c60c8924e20b4b1db6ee9eb0751dead5cb185ae97102c739f9f",
+   "bytes": 44726
   },
-  "planned_conditions": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15
-  ],
-  "planned_choices": 150000,
-  "sample_drawn": true,
-  "model_calls_run": 0,
-  "software": {
-    "python": "3.9.6",
-    "numpy": "1.26.4",
-    "pyarrow": "21.0.0"
+  "抽样记录/draw_sample.py": {
+   "sha256": "210be708be6f829725a052510aaef88817f532857ae1fc4df4a351612e3494cf",
+   "bytes": 15493
   },
-  "files": {
-    "README.md": {
-      "sha256": "aabc41b4e6f6b61957dbd6320565c0d09953ccd6cd113c728c7325210aeb736d",
-      "bytes": 694
-    },
-    "家庭数据.jsonl": {
-      "sha256": "5c3781d0f4e0b6b969f959891caf7e28c7b2695f2f93252248c076b4c3b2a91c",
-      "bytes": 20170508
-    },
-    "抽样记录/brackets.json": {
-      "sha256": "df6c4d5bf143c53eaa576b936a2b602c5988c2a2fb7f31b23504e0af0bca2cdf",
-      "bytes": 2285
-    },
-    "抽样记录/design_at_sampling.md": {
-      "sha256": "997a19e490454c60c8924e20b4b1db6ee9eb0751dead5cb185ae97102c739f9f",
-      "bytes": 44726
-    },
-    "抽样记录/draw_sample.py": {
-      "sha256": "210be708be6f829725a052510aaef88817f532857ae1fc4df4a351612e3494cf",
-      "bytes": 15493
-    },
-    "抽样记录/households_coded.parquet": {
-      "sha256": "91a3a322fe0d7f794ef9ae62af0a1e5d075ab115ce8a124c0047c33bc6054072",
-      "bytes": 112011
-    },
-    "抽样记录/households_decoded.parquet": {
-      "sha256": "b82294c8fdeccfb40fd8528d88e2392e38b3995402e5638ec74d451a8d63e473",
-      "bytes": 113039
-    },
-    "抽样记录/sample_index.parquet": {
-      "sha256": "0a3a0cf61db32dfd2388e2514de0e2362784cbd00b09267a5c7bf8c96ae32c72",
-      "bytes": 214090
-    },
-    "抽样记录/source_manifest.json": {
-      "sha256": "73a0a74048e5ec0009e4bf9b6b16bda915d04cd0e246cc86afa86d70023fcae0",
-      "bytes": 7707
-    },
-    "抽样记录/strata.json": {
-      "sha256": "ed8a738153bac8c71dc20f3aef7dff306887c8ff1a9017c7cdc0946d98f1dd9b",
-      "bytes": 8755
-    },
-    "抽样记录/validation.json": {
-      "sha256": "52c9f953cb863bfe39879d69b8b4064ddc1ff6024172fcf291f8bab049f0fcb7",
-      "bytes": 766
-    },
-    "抽样记录/详细说明.md": {
-      "sha256": "dc08f7fc355ba5bf7ea58596f170aa3018848978887d714b283c551b7a812c6b",
-      "bytes": 3069
-    }
+  "抽样记录/households_coded.parquet": {
+   "sha256": "91a3a322fe0d7f794ef9ae62af0a1e5d075ab115ce8a124c0047c33bc6054072",
+   "bytes": 112011
   },
-  "relocation": {
-    "moved_at_utc": "2026-10-22T03:29:39.172006+00:00",
-    "from": "/Users/vega/Downloads/MAS-Fin/S²-MAS/第一步_10000户样本_20261022",
-    "to": "/Users/vega/Downloads/MAS-Fin/S²-MAS/etf实验/第一步_10000户样本_20261022",
-    "script_change": "Project and design paths updated after directory move; sampling algorithm and sampled data unchanged.",
-    "script_sha256_before_move": "bff12cc764aced430110c3ead408050772cf4b382d157976a3cc64cfbd98ba06"
+  "抽样记录/households_decoded.parquet": {
+   "sha256": "b82294c8fdeccfb40fd8528d88e2392e38b3995402e5638ec74d451a8d63e473",
+   "bytes": 113039
   },
-  "current_sample_directory": "/Users/vega/Downloads/MAS-Fin/S²-MAS/etf实验/10000户样本_20261022",
-  "files_base": "..",
-  "layout_changed_at_utc": "2026-10-22T03:32:43.138729+00:00",
-  "primary_data": "家庭数据.jsonl"
+  "抽样记录/sample_index.parquet": {
+   "sha256": "0a3a0cf61db32dfd2388e2514de0e2362784cbd00b09267a5c7bf8c96ae32c72",
+   "bytes": 214090
+  },
+  "抽样记录/source_manifest.json": {
+   "sha256": "73a0a74048e5ec0009e4bf9b6b16bda915d04cd0e246cc86afa86d70023fcae0",
+   "bytes": 7707
+  },
+  "抽样记录/strata.json": {
+   "sha256": "ed8a738153bac8c71dc20f3aef7dff306887c8ff1a9017c7cdc0946d98f1dd9b",
+   "bytes": 8755
+  },
+  "抽样记录/validation.json": {
+   "sha256": "52c9f953cb863bfe39879d69b8b4064ddc1ff6024172fcf291f8bab049f0fcb7",
+   "bytes": 766
+  },
+  "抽样记录/详细说明.md": {
+   "sha256": "dc08f7fc355ba5bf7ea58596f170aa3018848978887d714b283c551b7a812c6b",
+   "bytes": 3069
+  }
+ },
+ "relocation": {
+  "moved_at_utc": "2026-10-22T03:29:39.172006+00:00",
+  "from": "第一步_10000户样本_20261022",
+  "to": "etf实验/第一步_10000户样本_20261022",
+  "script_change": "Project and design paths updated after directory move; sampling algorithm and sampled data unchanged.",
+  "script_sha256_before_move": "bff12cc764aced430110c3ead408050772cf4b382d157976a3cc64cfbd98ba06",
+  "note": "Paths recorded relative to the project root; absolute paths removed when publishing."
+ },
+ "current_sample_directory": "etf实验/10000户样本_20261022",
+ "files_base": "..",
+ "layout_changed_at_utc": "2026-10-22T03:32:43.138729+00:00",
+ "primary_data": "家庭数据.jsonl"
 }

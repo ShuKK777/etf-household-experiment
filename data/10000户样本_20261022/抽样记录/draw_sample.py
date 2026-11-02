@@ -243,7 +243,7 @@ def main():
     readme += [
         "", "## 重新生成", "",
         "使用同一源文件、同一方案及记录的 NumPy 版本，执行：", "",
-        "python3 draw_sample.py --project /Users/vega/Downloads/MAS-Fin/S²-MAS --output /另一个空目录", "",
+        "python3 draw_sample.py --project <项目根目录> --output <另一个空目录>", "",
         "脚本拒绝覆盖已有名单。模型和 15 个条件的推理结果不包含在本目录中。", "",
     ]
     (out / "README.md").write_text("\n".join(readme))
