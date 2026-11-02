@@ -165,3 +165,60 @@ def test_paths_resolve_without_environment():
     assert resolved.data == root / "data"
     assert resolved.scorer_dir.is_dir()
     assert resolved.engine_python.is_file()
+
+
+# ---------------------------------------------------------------- placebo arms
+def test_placebo_arms_are_length_matched_and_content_free():
+    """The control must differ from the treatment only in meaning.
+
+    If the two sentences drift apart in length, the arm stops isolating content and
+    the +1.6 to +2.4pp contrast in the report would be uninterpretable.
+    """
+    from etf_experiment.placebo import AMOUNTS, CONTROL, FAILURE
+
+    failure = FAILURE.format(amount=AMOUNTS["b1"])
+    assert len(failure) == len(FAILURE.format(amount=AMOUNTS["b2"])) == len(CONTROL)
+    for word in ("未成交", "门槛", "10,000", "不足", "起购", "资金", "持有", "产品", "元"):
+        assert word not in CONTROL, f"control leaks treatment vocabulary: {word}"
+    assert failure.startswith("上一轮选择") and CONTROL.startswith("上一轮选择已")
+
+
+def test_placebo_split_is_balanced_within_bracket():
+    from etf_experiment.placebo import BRACKET_COUNTS, build
+
+    indexes = {"b1": list(range(3_000)), "b2": list(range(3_000, 5_600))}
+    arms = build(indexes)
+    assert len(arms) == sum(BRACKET_COUNTS.values())
+    for bracket, expected in BRACKET_COUNTS.items():
+        subset = [arm for arm in arms if arm.bracket == bracket]
+        assert len(subset) == expected
+        failure = sum(1 for arm in subset if arm.kind == "failure")
+        assert failure == expected // 2, f"{bracket}: {failure} of {expected} in the failure arm"
+
+
+# ---------------------------------------------------------------- two-tick arms
+@pytest.mark.parametrize(
+    "condition,bracket,choice,expect_net",
+    [(4, "b1", "C", True), (4, "b5", "F", True), (4, "b1", "A", False),
+     (6, "b1", "C", False), (6, "b3", "C", False), (6, "b2", "A", False),
+     (8, "b4", "E", False)],
+)
+def test_two_tick_only_changes_the_amount_on_the_fee_arm(condition, bracket, choice, expect_net):
+    """Condition 4 reduces the sum re-offered; the others leave it alone."""
+    from etf_experiment.options import IDLE_X, net_after_subscription
+    from etf_experiment.two_tick import outcome
+
+    result = outcome(condition, bracket, choice)
+    if expect_net:
+        assert result.question_amount == pytest.approx(net_after_subscription(IDLE_X["new"][bracket]))
+    else:
+        assert result.question_amount == pytest.approx(IDLE_X["new"][bracket])
+
+
+def test_two_tick_marks_the_unaffordable_arm_as_unsuccessful():
+    """b1 cannot buy under a 10,000 floor, so the sentence must say so."""
+    from etf_experiment.two_tick import outcome
+
+    assert "未成交" in outcome(6, "b1", "C").sentence
+    assert "未成交" not in outcome(6, "b3", "C").sentence
+    assert "未成交" not in outcome(6, "b1", "A").sentence
