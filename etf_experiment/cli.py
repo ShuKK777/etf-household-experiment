@@ -132,6 +132,115 @@ def cmd_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_factorial(args: argparse.Namespace) -> int:
+    from .factorial_score import score_cells
+
+    paths = get_paths()
+    written = score_cells(
+        panel=paths.sample,
+        model_dir=Path(args.model_dir) if args.model_dir else paths.model_dir("sharp-322m"),
+        out_dir=Path(args.out) if args.out else paths.results / "factorial",
+        gpu=args.gpu,
+        only=args.only,
+    )
+    print(json.dumps({"scored": len(written), "cells": written[:8]}, ensure_ascii=False))
+    return 0
+
+
+def cmd_factorial_tables(args: argparse.Namespace) -> int:
+    import numpy as np
+
+    from . import factorial_estimate as estimate
+    from .factorial_score import load_cells
+    from .io import write_csv
+
+    paths = get_paths()
+    cells = load_cells(Path(args.cells))
+    factorial_cells = [cell for cell in cells if cell["spec"].kind == "factorial"]
+    extra = {cell["spec"].kind: cell for cell in cells if cell["spec"].kind != "factorial"}
+    if len(factorial_cells) != 162:
+        raise SystemExit(f"expected 162 factorial cells, found {len(factorial_cells)}")
+
+    records = read_jsonl(paths.sample)
+    asset = np.array([record["asset_bracket"] for record in records])
+    debt = np.array([record["profile"]["extended.debt_amount_bracket"] for record in records])
+    risk = np.array([record["profile"]["extended.risk_preference"] for record in records])
+    people = {
+        "asset": asset,
+        "low_asset": asset == "b1",
+        "debt_any": ~np.isin(debt, ["none", "unknown"]),
+        "no_risk": risk == "none",
+        "weight": np.array([float(record["normalized_weight"]) for record in records]),
+    }
+
+    out = Path(args.out)
+    marginal = estimate.marginal_rows(factorial_cells, people)
+    placebo = estimate.extra_rows(extra, factorial_cells, people)
+    logit = estimate.logit_rows(factorial_cells, people)
+    # The factorial tables were published with CRLF; keeping that terminator makes a
+    # rebuild produce no diff at all.
+    for name, rows in (("边际效应.csv", marginal), ("安慰剂与标签.csv", placebo),
+                       ("条件logit.csv", logit)):
+        write_csv(out / name, rows, newline="\r\n")
+    print(json.dumps({"marginal": len(marginal), "placebo": len(placebo),
+                      "logit": len(logit)}, ensure_ascii=False))
+    return 0
+
+
+def cmd_probes(args: argparse.Namespace) -> int:
+    from .probes_score import score_all
+
+    paths = get_paths()
+    written = score_all(
+        panel=paths.sample,
+        model_dir=Path(args.model_dir) if args.model_dir else paths.model_dir("sharp-322m"),
+        out_dir=Path(args.out) if args.out else paths.results / "probes",
+        inputs=Path(args.inputs) if args.inputs else paths.inputs,
+        by_order=Path(args.by_order) if args.by_order else paths.results / "by_order",
+        gpu=args.gpu,
+        names=args.only,
+    )
+    print(json.dumps({"scored": len(written), "probes": written}, ensure_ascii=False))
+    return 0
+
+
+def cmd_probe_tables(args: argparse.Namespace) -> int:
+    import numpy as np
+
+    from .io import read_jsonl as read
+    from .probes_score import write_tables
+
+    paths = get_paths()
+    records = read(paths.sample)
+    weights = np.array([float(record["normalized_weight"]) for record in records])
+    summary = write_tables(Path(args.probes), weights, Path(args.out))
+    print(json.dumps(summary, ensure_ascii=False))
+    return 0
+
+
+def cmd_teacher(args: argparse.Namespace) -> int:
+    from . import teacher
+    from .io import write_csv
+
+    paths = get_paths()
+    records = read_jsonl(paths.sample)
+    order, cube, names = teacher.load_teacher(Path(args.teacher))
+    rows = teacher.compare(order, cube, names, Path(args.cells), records)
+    write_csv(Path(args.out) / "教师对照.csv", rows)
+    print(json.dumps({"rows": len(rows), "sign_hits": teacher.summary(rows)}, ensure_ascii=False))
+    return 0
+
+
+def cmd_pdf(args: argparse.Namespace) -> int:
+    from .report_pdf import render
+
+    paths = get_paths()
+    source = Path(args.source) if args.source else paths.root / "报告" / "实验汇总.md"
+    output = Path(args.out) if args.out else paths.root / "报告" / "实验汇总.pdf"
+    print(json.dumps({"pages": render(source, output), "out": str(output)}, ensure_ascii=False))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="etf-experiment", description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -177,6 +286,43 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--results")
     p.add_argument("--households", type=int, default=10_000)
     p.set_defaults(func=cmd_check)
+
+    p = sub.add_parser("factorial", help="score the 162-cell factorial")
+    p.add_argument("--model-dir")
+    p.add_argument("--out")
+    p.add_argument("--gpu", type=int, default=0)
+    p.add_argument("--only", type=int, nargs="*", help="cell indices; default is all 164")
+    p.set_defaults(func=cmd_factorial)
+
+    p = sub.add_parser("factorial-tables", help="marginal effects, label arm, conditional logit")
+    p.add_argument("--cells", required=True)
+    p.add_argument("--out", required=True)
+    p.set_defaults(func=cmd_factorial_tables)
+
+    p = sub.add_parser("probes", help="score the wording and position probes")
+    p.add_argument("--model-dir")
+    p.add_argument("--out")
+    p.add_argument("--inputs")
+    p.add_argument("--by-order")
+    p.add_argument("--gpu", type=int, default=0)
+    p.add_argument("--only", nargs="*", help="probe names; default is all twenty")
+    p.set_defaults(func=cmd_probes)
+
+    p = sub.add_parser("probe-tables", help="wording and position tables")
+    p.add_argument("--probes", required=True)
+    p.add_argument("--out", required=True)
+    p.set_defaults(func=cmd_probe_tables)
+
+    p = sub.add_parser("teacher-table", help="27B against the small model on 1,000 households")
+    p.add_argument("--teacher", required=True)
+    p.add_argument("--cells", required=True)
+    p.add_argument("--out", required=True)
+    p.set_defaults(func=cmd_teacher)
+
+    p = sub.add_parser("pdf", help="render the report Markdown to PDF")
+    p.add_argument("--source")
+    p.add_argument("--out")
+    p.set_defaults(func=cmd_pdf)
 
     args = parser.parse_args(argv)
     return args.func(args)

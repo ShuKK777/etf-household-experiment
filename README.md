@@ -23,6 +23,8 @@ framing — actually move money, for which households, and by how much.
 |---|---|
 | `etf_experiment/` | the experiment code: conditions, persona rendering, task building, the engine launcher, the Qwen scorer, the three tables, the figures |
 | `docs/调用链路.md` | **how the experiment calls the MAS engine**, and which modules are ours |
+| `docs/重算一致性.md` | **can the published tables be rebuilt?** Byte-level comparison, and the two 1e-6 gaps explained |
+| `docs/脚本对照.md` | **where every original script went**, and the one file deliberately left in the experiment package |
 | `docs/设计文档/` | **how each of the six rounds is designed** — what changed, what it is compared against, what it identifies |
 | `报告/实验汇总.md` | full report: design, results, economic interpretation, limits |
 | `报告/实验汇总.pdf` | the same report as a print-ready PDF with figures |
@@ -133,6 +135,19 @@ python -m etf_experiment.cli tables \
 
 # redraw the figures
 python -m etf_experiment.cli figures --tables out/tables
+
+# the 162-cell factorial: score, then build its three tables
+python -m etf_experiment.cli factorial --gpu 0
+python -m etf_experiment.cli factorial-tables --cells results/factorial --out out/factorial
+
+# the text probes and the teacher contrast
+python -m etf_experiment.cli probes --gpu 0
+python -m etf_experiment.cli probe-tables --probes results/probes --out out/probes
+python -m etf_experiment.cli teacher-table \
+    --teacher results/probes/teacher27b --cells results/factorial --out out/probes
+
+# render the report to PDF
+python -m etf_experiment.cli pdf
 
 # tests
 python -m pytest tests -q

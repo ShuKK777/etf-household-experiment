@@ -222,3 +222,48 @@ def test_two_tick_marks_the_unaffordable_arm_as_unsuccessful():
     assert "未成交" in outcome(6, "b1", "C").sentence
     assert "未成交" not in outcome(6, "b3", "C").sentence
     assert "未成交" not in outcome(6, "b1", "A").sentence
+
+
+# ---------------------------------------------------------------- factorial / probes
+def test_factorial_has_162_crossed_cells_plus_two_arms():
+    from etf_experiment import factorial
+
+    factorial.self_check()
+    everything = factorial.cells()
+    crossed = [cell for cell in everything if cell.kind == "factorial"]
+    assert len(crossed) == 162
+    assert len(everything) == 164
+    # Every combination appears exactly once, which is what makes the marginal
+    # effects estimable averaged over the other four factors.
+    combos = {(c.fee, c.threshold, c.liquidity, c.info, c.rate) for c in crossed}
+    assert len(combos) == 162
+
+
+def test_length_placebo_is_not_shorter_than_the_treatment():
+    """A placebo that is shorter would measure length in the wrong direction."""
+    from etf_experiment import factorial
+
+    assert len(factorial.DIVIDEND_LENGTH_PLACEBO) >= len(factorial.DIVIDEND_WITH_DISTRIBUTION) - 4
+
+
+def test_probe_set_covers_fifteen_positions_and_five_wordings():
+    from etf_experiment import probes
+
+    names = probes.task_names()
+    assert len(names) == 20
+    assert sum(1 for name in names if name.startswith("position_")) == 15
+    assert set(probes.WORDING_NAMES) <= set(names)
+
+
+def test_teacher_sample_is_quota_stratified():
+    from etf_experiment import probes
+
+    # A synthetic panel with the same bracket composition as the real one.
+    brackets = np.array(["b1"] * 3_000 + ["b2"] * 2_600 + ["b3"] * 2_400
+                        + ["b4"] * 1_200 + ["b5"] * 800)
+    chosen = probes.teacher_sample(brackets)
+    assert len(chosen) == 1_000
+    assert len(set(chosen.tolist())) == 1_000
+    picked = brackets[chosen]
+    for bracket, expected in probes.TEACHER_QUOTA.items():
+        assert int((picked == bracket).sum()) == expected

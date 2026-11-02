@@ -48,5 +48,19 @@ docs/调用链路.md        引擎怎么被调用，哪些模块是我们的
 docs/设计文档/          每一轮实验改了什么（本目录）
 报告/                   结果与解读，含完整方案原文
 results/                聚合结果表 + manifest
-etf_experiment/         代码：条件模板、画像渲染、launcher、统计
+etf_experiment/         代码：条件模板、画像渲染、launcher、统计、因子与探针
 ```
+
+## 代码与文档的对应
+
+| 轮次 | 题面/设计 | 打分入口 | 出表入口 |
+|---|---|---|---|
+| ① 十五条件 | `conditions.py` | `launch.py`（走引擎） | `tables.py` |
+| ② 因子设计 | `factorial.py` | `factorial_score.py`（直接调编码器） | `factorial_estimate.py` |
+| ③ 两拍闭环 | `two_tick.py` | `launch.py` | `tables.py` 的两拍分支 |
+| ④ 句子安慰剂 | `placebo.py` | `launch.py` | 安慰剂表 |
+| ⑤ 文本探针 | `probes.py` | `probes_score.py`（直接调编码器） | `probes_score.py`、`teacher.py` |
+
+② 与 ⑤ 绕开引擎的 HTTP 层，直接调用同一个检查点与打分头——原因在
+`docs/调用链路.md` 第 3 节说明：百万级短请求下，往返开销大于前向计算，且这两轮不需要
+世界状态。**但报告里必须标明它们是不同的执行路径。**

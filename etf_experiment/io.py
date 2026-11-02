@@ -44,13 +44,21 @@ def write_jsonl(path: Path, rows: Iterable[dict]) -> int:
     return count
 
 
-def write_csv(path: Path, rows: list[dict]) -> None:
+def write_csv(path: Path, rows: list[dict], *, newline: str = "\n") -> None:
+    """Write a CSV with an explicit line terminator.
+
+    ``csv.writer`` defaults to ``\\r\\n``. The two table families are not consistent in
+    the published outputs -- the factorial tables are CRLF, the probe tables are LF --
+    so the terminator is a parameter rather than a constant. Reproducing each family
+    in its own convention keeps a rebuild a byte-for-byte no-op instead of a diff that
+    rewrites every line.
+    """
     if not rows:
         raise ValueError(f"refusing to write an empty table to {path}")
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator=newline)
         writer.writeheader()
         writer.writerows(rows)
 
